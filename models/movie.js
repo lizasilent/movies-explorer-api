@@ -56,9 +56,6 @@ const movieSchema = new mongoose.Schema({
       message: (props) => `Ошибка в ссылке ${props.value}`,
     },
   },
-  owner: {
-    required: true,
-  },
   movieId: {
     type: String,
     required: true,
