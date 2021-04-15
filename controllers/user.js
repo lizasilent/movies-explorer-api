@@ -31,7 +31,7 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       email, password: hash, name,
     }))
-    .then((user) => res.status(200).send({ mail: user.email }))
+    .then((user) => res.status(200).send({ email: user.email }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequest(`Данные не прошли валидацию ${err}`);
@@ -52,6 +52,14 @@ const updateUserInfo = (req, res, next) => {
         throw new BadRequest('Ошибка при обновлении информации пользователя');
       }
       res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        throw new BadRequest(`Данные не прошли валидацию ${err}`);
+      }
+      if (err.name === 'MongoError' || err.code === '11000') {
+        next(new ConflictError('Такой email уже зарегистрирован'));
+      }
     })
     .catch(next);
 };

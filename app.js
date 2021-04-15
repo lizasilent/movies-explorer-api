@@ -7,10 +7,10 @@ const mongoose = require('mongoose');
 const { errors, celebrate, Joi } = require('celebrate');
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
-// const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { createUser, login } = require('./controllers/user');
 const NotFoundError = require('./errors/not-found-err');
-// const auth = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json()); // для собирания JSON-формата
-// app.use(requestLogger);
+app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -56,13 +56,13 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-// app.use(auth);
+app.use(auth);
 app.use('/', usersRouter);
 app.use('/', moviesRouter);
 app.use('/*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
-// app.use(errorLogger);
+app.use(errorLogger);
 app.use(errors());
 
 // eslint-disable-next-line no-unused-vars

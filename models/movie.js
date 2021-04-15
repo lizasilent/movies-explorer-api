@@ -1,5 +1,6 @@
 /* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const movieSchema = new mongoose.Schema({
 
@@ -28,10 +29,9 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-      // eslint-disable-next-line no-useless-escape
-        return /^https?:\/\/(www\.)?([a-zA-Z0-9\-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-\._~:\/\?#\[\]@!\$&’\(\)\*\+,;=]+)/.test(v);
+        return validator.isURL(v);
       },
-      message: (props) => `Ошибка в ссылке ${props.value}`,
+      message: 'Формат должен быть ссылкой',
     },
   },
   trailer: {
@@ -39,10 +39,9 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-      // eslint-disable-next-line no-useless-escape
-        return /^https?:\/\/(www\.)?([a-zA-Z0-9\-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-\._~:\/\?#\[\]@!\$&’\(\)\*\+,;=]+)/.test(v);
+        return validator.isURL(v);
       },
-      message: (props) => `Ошибка в ссылке ${props.value}`,
+      message: 'Формат должен быть ссылкой',
     },
   },
   thumbnail: {
@@ -50,15 +49,20 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-      // eslint-disable-next-line no-useless-escape
-        return /^https?:\/\/(www\.)?([a-zA-Z0-9\-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-\._~:\/\?#\[\]@!\$&’\(\)\*\+,;=]+)/.test(v);
+        return validator.isURL(v);
       },
-      message: (props) => `Ошибка в ссылке ${props.value}`,
+      message: 'Формат должен быть ссылкой',
     },
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: [true, 'Обязательное поле'],
   },
   movieId: {
     type: String,
-    required: true,
+    ref: 'movie',
+    required: [true, 'Обязательное поле'],
   },
   nameRU: {
     type: String,
