@@ -8,7 +8,8 @@ const Forbidden = require('../errors/forbidden');
 
 // Получить список всех фильмов
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  const owner = req.user._id;
+  Movie.find({ owner })
     .then((movies) => {
       if (!movies) {
         throw new NotFoundError('Запрашиваемый файл не найден');
@@ -30,10 +31,10 @@ const createMovie = (req, res, next) => {
     description,
     image,
     trailer,
-    nameRU,
-    nameEN,
     thumbnail,
     movieId,
+    nameRU,
+    nameEN,
   } = req.body;
 
   Movie.create({
@@ -44,10 +45,10 @@ const createMovie = (req, res, next) => {
     description,
     image,
     trailer,
-    nameRU,
-    nameEN,
     thumbnail,
     movieId,
+    nameRU,
+    nameEN,
     owner,
   })
     .then((movie) => {
@@ -59,27 +60,25 @@ const createMovie = (req, res, next) => {
     .catch(next);
 };
 
-// Удалить карточку
 const deleteMovie = (req, res, next) => {
-  const owner = req.user._id;
-
   Movie.findById(req.params.movieId)
     .then((movie) => {
-      if (!movie) {
-        throw new NotFoundError('Фильм не найден');
+      if (!movie || movie.owner.toString() !== req.user._id) {
+        throw new NotFoundError('У пользователя нет фильма с таким id');
       }
-      if (movie.owner.toString() !== owner) {
-        throw new Forbidden('Нет доступа к удалению фильма');
-      }
-      Movie.findByIdAndRemove(req.params.movieId)
-        .then(() => res.status(200).send({ message: 'Фильм удален' }));
+      Movie.findByIdAndDelete(req.params.movieId)
+        .then(() => {
+          res.send({ message: 'Фильм удалён' });
+        })
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFoundError('Id фильма не валидный'));
+        throw new BadRequest('Данные не прошли валидацию');
       }
-      next(err);
-    });
+      throw err;
+    })
+    .catch(next);
 };
 
 module.exports = {
