@@ -64,6 +64,7 @@ const updateUserInfo = (req, res, next) => {
     .catch(next);
 };
 
+// Залогиниться
 const login = (req, res, next) => {
   const { email, password } = req.body;
 

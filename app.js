@@ -4,16 +4,16 @@ require('dotenv').config();
 const express = require('express');
 
 const mongoose = require('mongoose');
-const { errors, celebrate, Joi } = require('celebrate');
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
+const helmet = require('helmet');
+const { errors } = require('celebrate');
+const router = require('./routes/index');
+const errorsHandler = require('./middlewares/errors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { createUser, login } = require('./controllers/user');
-const NotFoundError = require('./errors/not-found-err');
-const auth = require('./middlewares/auth');
+const limiter = require('./middlewares/ratelimiter');
 
 const { PORT = 3000 } = process.env;
 const app = express();
+app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
@@ -41,45 +41,11 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
-
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-    name: Joi.string().min(2).max(30),
-  }),
-}), createUser);
-
-app.use(auth);
-app.use('/', usersRouter);
-app.use('/', moviesRouter);
-app.use('/*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
-});
+app.use(router);
 app.use(errorLogger);
 app.use(errors());
-
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = 500, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? `На сервере произошла ошибка${err}`
-        : message,
-    });
-});
-
+app.use(errorsHandler);
+app.use(limiter);
 app.listen(PORT, () => (
   // eslint-disable-next-line no-console
   console.log(PORT)

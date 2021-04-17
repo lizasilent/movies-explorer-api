@@ -4,7 +4,6 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequest = require('../errors/bad-request');
-const Forbidden = require('../errors/forbidden');
 
 // Получить список всех фильмов
 const getMovies = (req, res, next) => {
@@ -60,6 +59,7 @@ const createMovie = (req, res, next) => {
     .catch(next);
 };
 
+// Удалить фильм
 const deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .then((movie) => {
