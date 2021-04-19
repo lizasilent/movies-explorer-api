@@ -14,9 +14,9 @@ router.post('/movies', celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
-    trailer: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
-    thumbnail: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
+    image: Joi.string().required().pattern(/^https?:\/\/(www\.)?([a-zA-Z0-9-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-_~:/#[\]@!&â€™,;=]+)/),
+    trailer: Joi.string().required().pattern(/^https?:\/\/(www\.)?([a-zA-Z0-9-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-_~:/#[\]@!&â€™,;=]+)/),
+    thumbnail: Joi.string().required().pattern(/^https?:\/\/(www\.)?([a-zA-Z0-9-])+\.([a-zA-Z])+\/?([a-zA-Z0-9\-_~:/#[\]@!&â€™,;=]+)/),
     movieId: Joi.string().required(),
     nameRU: Joi.string().required().pattern(/^[а-яА-ЯЁё0-9\s]+$/),
     nameEN: Joi.string().required().pattern(/^[a-zA-Z0-9\s]+$/),
@@ -25,7 +25,7 @@ router.post('/movies', celebrate({
 
 router.delete('/movies/:movieId', celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().required(),
+    movieId: Joi.string().length(24).hex().required(),
   }),
 }), deleteMovie);
 

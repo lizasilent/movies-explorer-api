@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 // eslint-disable-next-line no-unused-vars
 function errorsHandler(err, req, res, next) {
   // если у ошибки нет статуса, выставляем 500
