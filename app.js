@@ -5,15 +5,17 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const cors = require('cors');
 const { errors } = require('celebrate');
 const router = require('./routes/index');
 const errorsHandler = require('./middlewares/errors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/ratelimiter');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3002 } = process.env;
 const app = express();
 app.use(helmet());
+app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
@@ -23,15 +25,15 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
 // eslint-disable-next-line no-console
 }).then(() => console.log('Connected to DS')).catch((err) => console.log(err));
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  if (req.method === 'OPTIONS') {
-    res.send(200);
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+//   if (req.method === 'OPTIONS') {
+//     res.sendStatus(200);
+//   }
+//   next();
+// });
 app.use(express.json()); // для собирания JSON-формата
 app.use(requestLogger);
 
