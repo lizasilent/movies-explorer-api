@@ -14,15 +14,17 @@ const limiter = require('./middlewares/ratelimiter');
 
 const { PORT = 3002 } = process.env;
 const app = express();
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://movies.lizasilent.nomoredomains.monster',
-    'https://lizasilent.github.io',
-  ],
-  credentials: true,
-};
-app.use('*', cors(options));
+app.use(cors());
+
+// const options = {
+//   origin: [
+//     'http://localhost:3000',
+//     'https://movies.lizasilent.nomoredomains.monster',
+//     'https://lizasilent.github.io',
+//   ],
+//   credentials: true,
+// };
+
 // app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
