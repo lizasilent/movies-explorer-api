@@ -12,10 +12,19 @@ const errorsHandler = require('./middlewares/errors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/ratelimiter');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3002 } = process.env;
 const app = express();
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'https://movies.lizasilent.nomoredomains.monster',
+    'https://lizasilent.github.io',
+  ],
+  credentials: true,
+};
+app.use('*', cors(options));
 app.use(helmet());
-app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
@@ -30,10 +39,11 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
 //   res.header('Access-Control-Allow-Headers', '*');
 //   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
 //   if (req.method === 'OPTIONS') {
-//     res.sendStatus(200);
+//     res.send(200);
 //   }
 //   next();
 // });
+
 app.use(express.json()); // для собирания JSON-формата
 app.use(requestLogger);
 
