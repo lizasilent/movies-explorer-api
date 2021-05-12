@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 
 const mongoose = require('mongoose');
-const helmet = require('helmet');
+// const helmet = require('helmet');
 const cors = require('cors');
 const { errors } = require('celebrate');
 const router = require('./routes/index');
@@ -15,16 +15,11 @@ const limiter = require('./middlewares/ratelimiter');
 const { PORT = 3002 } = process.env;
 const app = express();
 const options = {
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3002',
-    'https://movies.lizasilent.nomoredomains.monster',
-    'https://lizasilent.github.io',
-  ],
+  origin: '*',
   credentials: true,
 };
 app.use('*', cors(options));
-app.use(helmet());
+// app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
