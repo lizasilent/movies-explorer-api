@@ -15,7 +15,11 @@ const limiter = require('./middlewares/ratelimiter');
 const { PORT = 3002 } = process.env;
 const app = express();
 const options = {
-  origin: '*',
+  origin: [
+    'http://localhost:3000',
+    'https://movies.lizasilent.nomoredomains.monster',
+    'https://lizasilent.github.io',
+  ],
   credentials: true,
 };
 app.use('*', cors(options));
