@@ -47,7 +47,6 @@ const createUser = (req, res, next) => {
 
 // Обновить инфо юзера;
 const updateUserInfo = (req, res, next) => {
-  console.log(req);
   User.findByIdAndUpdate(req.user._id,
     { email: req.body.email, name: req.body.name }, { runValidators: true })
     .then((user) => {
